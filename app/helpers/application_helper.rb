@@ -13,4 +13,8 @@ module ApplicationHelper
     new_str = returns_fix(new_str)
     return new_str
   end
+
+  def read_state(status)
+    status ? "read" : "unread"
+  end
 end
