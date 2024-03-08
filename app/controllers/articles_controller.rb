@@ -3,11 +3,15 @@ class ArticlesController < ApplicationController
 
   # GET /articles or /articles.json
   def index
+    pull_articles if Article.all.empty?
     @articles = Article.all
   end
 
   # GET /articles/1 or /articles/1.json
   def show
+    @article = Article.find(params[:id])
+    @article.read_status = true
+    @article.save
   end
 
   # GET /articles/new
@@ -55,6 +59,26 @@ class ArticlesController < ApplicationController
       format.html { redirect_to articles_url, notice: "Article was successfully destroyed." }
       format.json { head :no_content }
     end
+  end
+
+  def pull_articles
+    url = "https://rss.slashdot.org/Slashdot/slashdotMain"
+    feed = RSS::Parser.parse(url)
+    feed.items.each do |art|
+
+      art_params = {
+        title: art.title,
+        description: art.description,
+        author: art.dc_creator,
+        read_status: false,
+        link: art.link,
+        publish_date: art.dc_date.to_date
+      }
+
+      @article = Article.new(art_params)
+      @article.save
+    end
+    puts "#{Article.all.count} articles in db"
   end
 
   private
