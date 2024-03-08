@@ -4,6 +4,10 @@ class ArticlesController < ApplicationController
   # GET /articles or /articles.json
   def index
     pull_articles if Article.all.empty?
+    if params[:ur]
+      to_mark = params[:ur]
+      mark_unread(to_mark)
+    end
     @articles = Article.all
   end
 
@@ -79,6 +83,15 @@ class ArticlesController < ApplicationController
       @article.save
     end
     puts "#{Article.all.count} articles in db"
+  end
+
+  def mark_unread(id)
+    if Article.exists?(id.to_i)
+      @article = Article.find(id.to_i)
+      @article.read_status = false
+      @article.save
+      puts "Article #{@article.id} marked as unread"
+    end
   end
 
   private
