@@ -6,12 +6,10 @@
   <table>
     <% @articles.each do |article| %>
       <tr>
-        <td>
-          <%= link_to article do %>
-            <h3><%= article.title %></h3>
-            <p><%= article.description.truncate_words(15) %>
-          <% end %>
-        </td>
+        <td class="content-container <%= read_state(article.read_status) %>">
+        <h3><%= link_to article.title, article, 'data-turbo' => false %></h3>
+        <p><%= article.description.truncate_words(15) %></p>
+      </td>
       </tr>
     <% end %>
 </div>
